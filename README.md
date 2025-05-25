@@ -19,13 +19,17 @@ GitHub Actions에 워크플로우를 작성해 다음과 같이 배포가 진행
 
 ## 주요 링크
 
-- S3 버킷 웹사이트 엔드포인트: ****\_****
-- CloudFrount 배포 도메인 이름: ****\_****
+- S3 버킷 웹사이트 엔드포인트: http://hanghae-yubin-bucket.s3-website-us-east-1.amazonaws.com
+- CloudFrount 배포 도메인 이름: https://d116nkzjkpdj0x.cloudfront.net
 
 ## 주요 개념
 
-- GitHub Actions과 CI/CD 도구: ****\_****
-- S3와 스토리지: ****\_****
-- CloudFront와 CDN: ****\_****
-- 캐시 무효화(Cache Invalidation): ****\_****
-- Repository secret과 환경변수: ****\_****
+- GitHub Actions과 CI/CD 도구: \***\*\_\*\***
+- S3와 스토리지: \***\*\_\*\***
+- CloudFront와 CDN: \***\*\_\*\***
+- 캐시 무효화(Cache Invalidation): \***\*\_\*\***
+- Repository secret과 환경변수: \***\*\_\*\***
+
+## CDN과 성능최적화
+
+- (CDN 도입 전과 도입 후의 성능 개선 보고서 작성)

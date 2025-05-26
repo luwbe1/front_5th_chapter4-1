@@ -69,8 +69,9 @@ AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 �
 
 ## CDN과 성능최적화
 
-- (CDN 도입 전과 도입 후의 성능 개선 보고서 작성)
-
+##### S3와 CloundFront
+![Image](https://github.com/user-attachments/assets/29e2252f-2f85-4ca6-9ff3-176714f88c5b)
+![Image](https://github.com/user-attachments/assets/e63fbc33-93bf-4e91-8a2e-cd34b98e5152)
 #### 첫 화면 로딩 (HTML 문서)
 
 | 비교 지점         | S3 직접 배포             | CloudFront (CDN) 배포 |

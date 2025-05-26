@@ -4,7 +4,7 @@
 
 ## 개요
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/6912169d-ce70-41bf-b624-946d4ee984eb/Untitled.png)
+![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
 
 GitHub Actions에 워크플로우를 작성해 다음과 같이 배포가 진행되도록 합니다.
 

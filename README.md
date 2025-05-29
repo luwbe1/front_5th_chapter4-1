@@ -6,8 +6,8 @@
 
 ![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
 
-1. GitHub Actions
-워크플로우 구성: main 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다.
+#### 1. GitHub Actions
+워크플로우 구성: main 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다. <br>
 주요 작업:
 Checkout: 저장소 코드를 내려받습니다. <br>
 npm ci: 프로젝트 의존성 설치 <br>
@@ -15,16 +15,16 @@ npm run build: Next.js 빌드 산출물 생성 <br>
 AWS 자격 증명 설정 및 S3에 업로드 <br>
 CloudFront 캐시 무효화로 최신 파일을 배포 <br>
 
-2. Amazon S3
+#### 2. Amazon S3
 Next.js 빌드된 정적 파일을 저장하는 버킷 역할을 합니다.
 정적 자산(HTML, JS, CSS)을 S3에서 호스팅합니다.
 
-3. Amazon CloudFront
+#### 3. Amazon CloudFront
 S3에서 가져온 파일을 전 세계 엣지 서버로 배포합니다.
 사용자에게 더 빠르고 안정적으로 콘텐츠를 전달합니다.
 새로 배포된 파일로 캐시 무효화가 진행됩니다.
 
-4. IAM과 보안
+#### 4. IAM과 보안
 GitHub Actions가 S3와 CloudFront에 접근할 수 있도록 IAM 역할(정책)을 구성했습니다.
 AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 안전하게 관리합니다.
 

@@ -10,7 +10,8 @@
   - [Amazon S3](#2-amazon-s3---안정적인-웹-호스팅)  
   - [Amazon CloudFront](#3-amazon-cloudfront---글로벌-성능-최적화)  
   - [IAM과 보안](#4-iam과-보안)  
-[주요 개념 정리](#주요-개념-정리)  
+[주요 링크](#주요-링크)  
+[주요 개념](#주요-개념)  
   - [GitHub Actions과 CI/CD](#github-actions과-cicd-도구)  
   - [S3와 스토리지](#s3와-스토리지)  
   - [CloudFront와 CDN](#cloudfront와-cdn)  
@@ -117,6 +118,8 @@ sequenceDiagram
     
     Note over Dev,User: ✅ 배포 완료!
 ```
+
+### 주요 단계별 설명
 
 #### 1. GitHub Actions
 워크플로우 구성: `main` 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다.

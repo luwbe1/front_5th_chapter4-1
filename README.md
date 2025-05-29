@@ -6,7 +6,7 @@
 #### 파이프라인 다이어그램 (diagrams)
 ![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
 
-### 파이프라인 다이어그램 자세한 버전
+#### 파이프라인 다이어그램 자세한 버전
 ```mermaid
 graph TB
     Dev[👨‍💻 Developer] --> |코드 작성 및 커밋| LocalRepo[📁 Local Git Repository]
@@ -100,24 +100,6 @@ sequenceDiagram
     
     Note over Dev,User: ✅ 배포 완료!
 ```
-graph TD
-  GIT[Git Repository]
-  GHA[GitHub Actions]
-  IAM[AWS IAM]
-  S3[S3 버킷 (정적 파일 저장)]
-  CF[CloudFront (CDN)]
-  USER[사용자]
-
-  %% 흐름
-  GIT --> GHA
-  GHA -->|빌드 & 배포| S3
-  GHA -->|캐시 무효화| CF
-  GHA -->|IAM 역할로 접근| IAM
-
-  %% AWS 내부
-  S3 -->|정적 파일 제공| CF
-  CF -->|최신 정적 파일 전달| USER
-
 
 #### 1. GitHub Actions
 워크플로우 구성: main 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다. <br>

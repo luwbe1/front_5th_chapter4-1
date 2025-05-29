@@ -62,9 +62,17 @@ AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 �
   예) CloudFront의 Invalidation API를 사용해서 특정 경로 캐시를 제거.
 
 - #### Repository secret과 환경변수
+  
   Repository secret은 GitHub Actions 등에서 민감 정보를 안전하게 관리하는 방식입니다.
   예를 들어, 배포용 API 키, 데이터베이스 비밀번호 등을 저장하고, 워크플로에서 환경 변수로 불러와 사용합니다.
   이를 통해 보안을 유지하면서도 자동화 파이프라인을 안전하게 실행할 수 있습니다.
+
+- #### Route53과 DNS 서비스
+  
+  Route 53은 AWS의 DNS(도메인 네임 시스템) 관리 서비스입니다.
+  S3 또는 CloudFront에 배포된 웹사이트에 도메인(예: www.example.com)을 연결할 수 있습니다.
+  사용자는 Route 53을 통해 사용자 지정 도메인과 연결된 트래픽을 전 세계적으로 안정적이고 빠르게 라우팅할 수 있습니다.
+  실무에선 Route 53을 사용해 도메인 등록 → S3/CloudFront와 연결 → HTTPS 인증서 발급까지 진행하는 경우가 많습니다.
 
 ### CDN과 성능최적화
 

@@ -3,8 +3,55 @@
 ## 프론트엔드 배포 파이프라인
 
 ### 개요
-
+#### 파이프라인 다이어그램 (diagrams)
 ![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
+
+### 파이프라인 다이어그램 자세한 버전
+```mermaid
+graph TB
+    Dev[👨‍💻 Developer] --> |코드 작성 및 커밋| LocalRepo[📁 Local Git Repository]
+    LocalRepo --> |git push origin main| GitHub[🐙 GitHub Repository]
+    
+    GitHub --> |트리거| GitHubActions[⚡ GitHub Actions]
+    
+    subgraph "GitHub Actions Workflow"
+        GitHubActions --> Checkout[📥 Checkout Code<br/>actions/checkout@v4]
+        Checkout --> NodeSetup[🔧 Setup Node.js<br/>actions/setup-node@v4]
+        NodeSetup --> InstallDeps[📦 Install Dependencies<br/>npm ci]
+        InstallDeps --> Build[🏗️ Build Project<br/>npm run build]
+        Build --> AWSConfig[🔐 Configure AWS Credentials<br/>aws-actions/configure-aws-credentials]
+        AWSConfig --> S3Upload[📤 Upload to S3<br/>aws s3 sync ./out s3://bucket]
+        S3Upload --> CloudFrontInvalidation[🔄 CloudFront Invalidation<br/>aws cloudfront create-invalidation]
+    end
+    
+    subgraph "AWS Services"
+        S3[📦 Amazon S3<br/>Static File Hosting<br/>• HTML, CSS, JS 파일<br/>• 이미지 및 정적 자산<br/>• 버킷 정책 설정]
+        CloudFront[🌐 Amazon CloudFront<br/>CDN 서비스<br/>• 전 세계 엣지 로케이션<br/>• 캐시 관리<br/>• HTTPS 지원]
+        IAM[🔒 AWS IAM<br/>• GitHub Actions용 사용자<br/>• S3 읽기/쓰기 권한<br/>• CloudFront 무효화 권한]
+    end
+    
+    subgraph "보안 관리"
+        GitHubSecrets[🔑 GitHub Repository Secrets<br/>• AWS_ACCESS_KEY_ID<br/>• AWS_SECRET_ACCESS_KEY<br/>• AWS_REGION]
+        AWSSecrets[🛡️ AWS Secrets Manager<br/>선택적 고급 보안]
+    end
+    
+    S3Upload --> S3
+    CloudFrontInvalidation --> CloudFront
+    AWSConfig -.-> GitHubSecrets
+    AWSConfig -.-> IAM
+    GitHubSecrets -.-> AWSSecrets
+    
+    S3 --> |Origin| CloudFront
+    CloudFront --> |빠른 전송| EdgeLocations[🌍 Edge Locations<br/>전 세계 캐시 서버]
+    EdgeLocations --> Users[👥 End Users<br/>웹사이트 방문자]
+    
+    style GitHub fill:#24292e,stroke:#fff,stroke-width:2px,color:#fff
+    style GitHubActions fill:#2088ff,stroke:#fff,stroke-width:2px,color:#fff
+    style S3 fill:#ff9900,stroke:#fff,stroke-width:2px,color:#fff
+    style CloudFront fill:#ff9900,stroke:#fff,stroke-width:2px,color:#fff
+    style IAM fill:#ff9900,stroke:#fff,stroke-width:2px,color:#fff
+    style Users fill:#28a745,stroke:#fff,stroke-width:2px,color:#fff
+```
 
 #### 파이프라인 시퀀스 다이어그램
 ```mermaid

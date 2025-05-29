@@ -1,12 +1,12 @@
 # front_5th_chapter4-1
 
-# 프론트엔드 배포 파이프라인
+## 프론트엔드 배포 파이프라인
 
-## 개요
+### 개요
 
 ![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
 
-1️⃣ GitHub Actions
+1. GitHub Actions
 
 워크플로우 구성: main 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다.
 주요 작업:
@@ -16,25 +16,25 @@ npm run build: Next.js 빌드 산출물 생성
 AWS 자격 증명 설정 및 S3에 업로드
 CloudFront 캐시 무효화로 최신 파일을 배포
 
-2️⃣ Amazon S3
+2. Amazon S3
 Next.js 빌드된 정적 파일을 저장하는 버킷 역할을 합니다.
 정적 자산(HTML, JS, CSS)을 S3에서 호스팅합니다.
 
-3️⃣ Amazon CloudFront
+3. Amazon CloudFront
 S3에서 가져온 파일을 전 세계 엣지 서버로 배포합니다.
 사용자에게 더 빠르고 안정적으로 콘텐츠를 전달합니다.
 새로 배포된 파일로 캐시 무효화가 진행됩니다.
 
-4️⃣ IAM과 보안
+4. IAM과 보안
 GitHub Actions가 S3와 CloudFront에 접근할 수 있도록 IAM 역할(정책)을 구성했습니다.
 AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 안전하게 관리합니다.
 
-## 주요 링크
+### 주요 링크
 
 - S3 버킷 웹사이트 엔드포인트: http://hanghae-yubin-bucket.s3-website-us-east-1.amazonaws.com
 - CloudFrount 배포 도메인 이름: https://d116nkzjkpdj0x.cloudfront.net
 
-## 주요 개념
+### 주요 개념
 
 - #### GitHub Actions과 CI/CD 도구
 
@@ -67,7 +67,7 @@ AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 �
   예를 들어, 배포용 API 키, 데이터베이스 비밀번호 등을 저장하고, 워크플로에서 환경 변수로 불러와 사용합니다.
   이를 통해 보안을 유지하면서도 자동화 파이프라인을 안전하게 실행할 수 있습니다.
 
-## CDN과 성능최적화
+### CDN과 성능최적화
 
 ##### S3와 CloundFront
 ![Image](https://github.com/user-attachments/assets/29e2252f-2f85-4ca6-9ff3-176714f88c5b)

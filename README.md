@@ -5,6 +5,54 @@
 ### 개요
 
 ![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
+
+#### 파이프라인 시퀀스 다이어그램
+```mermaid
+sequenceDiagram
+    participant Dev as 👨‍💻 Developer
+    participant Git as 📁 Git Repository
+    participant GH as 🐙 GitHub
+    participant GA as ⚡ GitHub Actions
+    participant S3 as 📦 Amazon S3
+    participant CF as 🌐 CloudFront
+    participant IAM as 🔒 IAM
+    participant User as 👥 End User
+    
+    Dev->>Git: 1. 코드 작성 및 커밋
+    Dev->>GH: 2. git push origin main
+    
+    Note over GH,GA: 🚀 자동 배포 시작
+    GH->>GA: 3. Push 이벤트 트리거
+    
+    Note over GA: 📋 Workflow 실행
+    GA->>GA: 4. Checkout 코드
+    GA->>GA: 5. Node.js 환경 설정
+    GA->>GA: 6. npm ci (의존성 설치)
+    GA->>GA: 7. npm run build (빌드)
+    
+    Note over GA,IAM: 🔐 AWS 인증
+    GA->>IAM: 8. AWS 자격 증명 확인
+    IAM-->>GA: 9. 인증 성공
+    
+    Note over GA,S3: 📤 정적 파일 업로드
+    GA->>S3: 10. 빌드 파일 업로드
+    S3-->>GA: 11. 업로드 완료
+    
+    Note over GA,CF: 🔄 캐시 무효화
+    GA->>CF: 12. 캐시 무효화 요청
+    CF-->>GA: 13. 무효화 시작
+    
+    Note over CF: 🌍 전 세계 배포
+    CF->>CF: 14. 엣지 로케이션 업데이트
+    
+    Note over User,CF: 🌐 사용자 접근
+    User->>CF: 15. 웹사이트 요청
+    CF->>S3: 16. Origin에서 파일 가져오기 (캐시 미스 시)
+    S3-->>CF: 17. 파일 전송
+    CF-->>User: 18. 최신 웹사이트 제공
+    
+    Note over Dev,User: ✅ 배포 완료!
+```
 graph TD
   GIT[Git Repository]
   GHA[GitHub Actions]

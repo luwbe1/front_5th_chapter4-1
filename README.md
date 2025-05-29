@@ -2,11 +2,28 @@
 
 ## 프론트엔드 배포 파이프라인
 
+## 목차
+
+[개요](#개요)  
+[주요 단계별 설명](#주요-단계별-설명)  
+  - [GitHub Actions](#1-github-actions)  
+  - [Amazon S3](#2-amazon-s3---안정적인-웹-호스팅)  
+  - [Amazon CloudFront](#3-amazon-cloudfront---글로벌-성능-최적화)  
+  - [IAM과 보안](#4-iam과-보안)  
+[주요 개념 정리](#주요-개념-정리)  
+  - [GitHub Actions과 CI/CD](#github-actions과-cicd-도구)  
+  - [S3와 스토리지](#s3와-스토리지)  
+  - [CloudFront와 CDN](#cloudfront와-cdn)  
+  - [캐시 무효화](#캐시-무효화cache-invalidation)  
+  - [Route53과 DNS 서비스](#route53과-dns-서비스)  
+[CDN과 성능 최적화 비교](#cdn과-성능최적화)
+
+
 ### 개요
 #### 파이프라인 다이어그램 (diagrams)
 ![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
 
-#### 파이프라인 다이어그램 자세한 버전
+#### 파이프라인 플로우 차트
 ```mermaid
 graph TB
     Dev[👨‍💻 Developer] --> |코드 작성 및 커밋| LocalRepo[📁 Local Git Repository]
@@ -102,32 +119,39 @@ sequenceDiagram
 ```
 
 #### 1. GitHub Actions
-워크플로우 구성: `main` 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다. <br>
-- 주요 작업: <br>
-    - Checkout: 저장소 코드를 내려받습니다. <br>
-    - npm ci: CI/CD 환경에 맞춰 프로젝트 의존성 설치 <br>
-    - npm run build: Next.js 빌드 산출물 생성(out/) <br>
-    - AWS 자격 증명 설정: IAM 역할을 활용해 AWS 리소스에 안전하게 접근 <br>
-    - S3로 빌드 결과물 업로드: 정적 파일을 S3 버킷에 배포 <br>
-    - CloudFront 캐시 무효화 수행: 캐시가 이전 파일을 보여주지 않도록 Invalidation 실행 <br>
+워크플로우 구성: `main` 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다.
 
-#### 2. Amazon S3
-Next.js 빌드된 정적 파일을 저장하는 버킷 역할을 합니다.
-정적 자산(HTML, JS, CSS)을 S3에서 호스팅합니다.
+- 주요 작업:
+  - Checkout: 저장소 코드를 내려받습니다.
+  - npm ci: CI/CD 환경에 맞춰 프로젝트 의존성 설치
+  - npm run build: Next.js 빌드 산출물 생성(out/)
+  - AWS 자격 증명 설정: IAM 역할을 활용해 AWS 리소스에 안전하게 접근
+  - S3로 빌드 결과물 업로드: 정적 파일을 S3 버킷에 배포
+  - CloudFront 캐시 무효화 수행: 캐시가 이전 파일을 보여주지 않도록 Invalidation 실행
 
-#### 3. Amazon CloudFront
-S3에서 가져온 파일을 전 세계 엣지 서버로 배포합니다.
-사용자에게 더 빠르고 안정적으로 콘텐츠를 전달합니다.
-새로 배포된 파일로 캐시 무효화가 진행됩니다.
+#### 2. Amazon S3 - 안정적인 웹 호스팅
+
+Next.js 빌드된 정적 파일을 저장하는 버킷 역할을 합니다. 전통적인 웹 서버 없이도 정적 자산을 안전하게 저장하고 웹사이트로 서비스할 수 있습니다.
+정적 자산(HTML, JS, CSS)을 S3에서 호스팅합니다. 트래픽 급증 시에도 자동으로 확장되어 안정적인 서비스를 제공합니다.
+
+#### 3. Amazon CloudFront - 글로벌 성능 최적화
+
+S3에서 가져온 파일을 전 세계 엣지 서버로 배포합니다. 사용자에게 더 빠르고 안정적으로 콘텐츠를 전달합니다.
+새로 배포된 파일로 캐시 무효화가 진행되어 전 세계 사용자가 동시에 최신 버전을 경험할 수 있습니다.
 
 #### 4. IAM과 보안
+
 GitHub Actions가 S3와 CloudFront에 접근할 수 있도록 IAM 역할(정책)을 구성했습니다.
 AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 안전하게 관리합니다.
+
+---
 
 ### 주요 링크
 
 - S3 버킷 웹사이트 엔드포인트: http://hanghae-yubin-bucket.s3-website-us-east-1.amazonaws.com
 - CloudFrount 배포 도메인 이름: https://d116nkzjkpdj0x.cloudfront.net
+
+---
 
 ### 주요 개념
 
@@ -138,17 +162,74 @@ AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 �
   예를 들어, 코드 push 시 자동으로 테스트, 빌드, 배포 과정을 실행합니다.
   이를 통해 배포 오류를 줄이고, 일관된 개발 파이프라인을 유지할 수 있습니다.
 
+  
+    **예시 워크플로우**
+    ```
+    name: Deploy to S3
+    on:
+      push:
+        branches: [main]
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: '18'
+          - run: npm ci
+          - run: npm run build
+          - name: Deploy to S3
+            run: aws s3 sync ./build s3://my-bucket
+    ```
+
 - #### S3와 스토리지
 
   S3는 Amazon Web Services의 객체 스토리지 서비스입니다.
   정적 웹사이트 파일(html, css, js)이나 이미지, 동영상 같은 파일을 저장·서빙합니다.
   높은 내구성(99.999999999%)과 가용성을 제공해, 안전하게 정적 파일을 저장할 수 있습니다.
 
+  **S3 버킷 구조 예시**
+  ```
+  my-website-bucket/
+    ├── index.html
+    ├── about.html
+    ├── css/
+    │   ├── styles.css
+    │   └── bootstrap.min.css
+    ├── js/
+    │   ├── app.js
+    │   └── jquery.min.js
+    └── images/
+        ├── logo.png
+        └── hero-bg.jpg
+    ```
+
+    **AWS CLI로 파일 업로드**
+    ```
+    # 단일 파일 업로드
+    aws s3 cp index.html s3://my-bucket/
+    
+    # 폴더 전체 동기화
+    aws s3 sync ./build s3://my-bucket --delete
+    
+    # 정적 웹사이트 호스팅 설정
+    aws s3 website s3://my-bucket --index-document index.html
+    ```
+
 - #### CloudFront와 CDN
 
   CloudFront는 AWS의 CDN(콘텐츠 전송 네트워크) 서비스입니다.
   S3 같은 저장소에서 정적 파일을 가져와 전 세계 엣지 로케이션으로 배포해, 사용자에게 더 빠르게 콘텐츠를 전달합니다.
   CDN은 글로벌 사용자에게 콘텐츠를 빠르게 제공하고, 서버 부하를 줄여줍니다.
+
+  **CDN 작동 원리**
+  ```
+  사용자(서울) → 한국 엣지 서버 → 콘텐츠 전달 (빠름 ⚡)
+          vs
+  사용자(서울) → 미국 Origin 서버 → 콘텐츠 전달 (느림 🐌)
+  ```
 
 - #### 캐시 무효화(Cache Invalidation)
 
@@ -157,11 +238,54 @@ AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 �
   이때 캐시 무효화를 통해 최신 콘텐츠로 빠르게 갱신할 수 있습니다.
   예) CloudFront의 Invalidation API를 사용해서 특정 경로 캐시를 제거.
 
+     **CloudFront 캐시 무효화 명령어**
+     ```
+    # 전체 캐시 무효화
+    aws cloudfront create-invalidation \
+      --distribution-id E1234567890123 \
+      --paths "/*"
+    
+    # 특정 파일만 무효화
+    aws cloudfront create-invalidation \
+      --distribution-id E1234567890123 \
+      --paths "/index.html" "/css/styles.css"
+    ```
+    **캐시 무효화 과정**
+    1. 새 파일 업로드 → S3
+    2. 캐시 무효화 실행 → CloudFront
+    3. 전 세계 엣지 서버 캐시 삭제
+    4. 사용자 요청 시 → 새 파일 전달
+
 - #### Repository secret과 환경변수
   
   Repository secret은 GitHub Actions 등에서 민감 정보를 안전하게 관리하는 방식입니다.
   예를 들어, 배포용 API 키, 데이터베이스 비밀번호 등을 저장하고, 워크플로에서 환경 변수로 불러와 사용합니다.
   이를 통해 보안을 유지하면서도 자동화 파이프라인을 안전하게 실행할 수 있습니다.
+
+  **GitHub Repository Secrets 설정**
+  ```
+  Settings → Secrets and variables → Actions
+    
+  필요한 Secrets:
+    - AWS_ACCESS_KEY_ID: AKIA...
+    - AWS_SECRET_ACCESS_KEY: wJalr...
+    - AWS_REGION: us-east-1
+    - S3_BUCKET_NAME: my-website-bucket
+  ```
+
+  **워크플로우에서 Secret 사용**
+  ```
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+    
+    - name: Deploy to S3
+      run: |
+        aws s3 sync ./build s3://${{ secrets.S3_BUCKET_NAME }}
+   ```
 
 - #### Route53과 DNS 서비스
   
@@ -169,6 +293,16 @@ AWS Secrets Manager나 GitHub Repository Secrets를 활용해 자격 증명을 �
   S3 또는 CloudFront에 배포된 웹사이트에 도메인(예: www.example.com)을 연결할 수 있습니다.
   사용자는 Route 53을 통해 사용자 지정 도메인과 연결된 트래픽을 전 세계적으로 안정적이고 빠르게 라우팅할 수 있습니다.
   실무에선 Route 53을 사용해 도메인 등록 → S3/CloudFront와 연결 → HTTPS 인증서 발급까지 진행하는 경우가 많습니다.
+
+  **도메인 연결 전체 흐름**
+    1. 도메인 구매 (Route 53 또는 외부)
+    2. Route 53 호스팅 존 생성
+    3. DNS 레코드 설정 (A, CNAME)
+    4. SSL 인증서 발급 (ACM)
+    5. CloudFront에 도메인 연결
+    6. 사용자 접근: mysite.com → Route 53 → CloudFront → S3
+
+---
 
 ### CDN과 성능최적화
 

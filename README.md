@@ -7,14 +7,13 @@
 ![Image](https://github.com/user-attachments/assets/471e09f6-fbd4-4437-9174-c2cafa64e829)
 
 1. GitHub Actions
-
 워크플로우 구성: main 브랜치에 push 이벤트가 발생하면 배포가 자동으로 진행됩니다.
 주요 작업:
-Checkout: 저장소 코드를 내려받습니다.
-npm ci: 프로젝트 의존성 설치
-npm run build: Next.js 빌드 산출물 생성
-AWS 자격 증명 설정 및 S3에 업로드
-CloudFront 캐시 무효화로 최신 파일을 배포
+Checkout: 저장소 코드를 내려받습니다. <br>
+npm ci: 프로젝트 의존성 설치 <br>
+npm run build: Next.js 빌드 산출물 생성 <br>
+AWS 자격 증명 설정 및 S3에 업로드 <br>
+CloudFront 캐시 무효화로 최신 파일을 배포 <br>
 
 2. Amazon S3
 Next.js 빌드된 정적 파일을 저장하는 버킷 역할을 합니다.
